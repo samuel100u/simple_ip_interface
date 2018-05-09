@@ -14,6 +14,31 @@ int isValidIpAddress(const char *ipAddress)
     return result != 0;
 }
 
+void write_auto_run_script(const char *ip, const char *gw){
+
+
+	FILE *fptr;
+	
+	char format[] = "#!/bin/sh -e  \nsudo ifconfig eth0 %s \nsudo route add default gw %s eth0 \nexit 0";
+	char buf[256] = {};
+	
+	fptr = fopen("/etc/rc.local", "w");
+	
+	if(fptr == NULL)
+	{
+	  printf("Error!");
+	  exit(1);
+	}
+	
+	sprintf(buf,format,ip,gw);
+
+	fprintf(fptr,"%s",buf);
+	
+	fclose(fptr);
+}
+
+
+
 void change_static_ip(const char *ip){
 	
 	char format[] = "sudo ifconfig eth0 %s";
@@ -38,6 +63,7 @@ int change_network_settings(const char *ip, const char *gw){
 			
 		change_static_ip(ip);
 		change_gw_ip(gw);
+		write_auto_run_script(ip,gw);
 		
 	}else{
 		return 0;
@@ -56,7 +82,7 @@ onion_connection_status process_data(void *_, onion_request *req, onion_response
 									"<input type=\"button\" value=\"Go back!\" onclick=\"history.back()\">\n"
 									"</input>\n"
 								"</form>\n"
-							"</html>\n";
+						"</html>\n";
 	
 	if (onion_request_get_flags(req)&OR_HEAD){
 		onion_response_write_headers(res);
@@ -66,6 +92,8 @@ onion_connection_status process_data(void *_, onion_request *req, onion_response
 	
 	const char *IP = onion_request_get_post(req,"ip");
 	const char *GW = onion_request_get_post(req,"gw");
+	
+	
 		
 	int result = change_network_settings(IP, GW);
 	
@@ -77,6 +105,7 @@ onion_connection_status process_data(void *_, onion_request *req, onion_response
 
 	return OCS_PROCESSED;
 }
+
 onion *o=NULL;
 
 static void shutdown_server(int _){
