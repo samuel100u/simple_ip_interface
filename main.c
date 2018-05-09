@@ -1,4 +1,3 @@
-/** Licensed under AGPL 3.0. (C) 2010 David Moreno Montero. http://coralbits.com */
 #include <onion/onion.h>
 #include <onion/log.h>
 #include <onion/version.h>
@@ -6,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <arpa/inet.h>
+
+#define DEV "wlan0"
 
 int isValidIpAddress(const char *ipAddress)
 {
@@ -19,7 +20,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 
 	FILE *fptr;
 	
-	char format[] = "#!/bin/sh -e  \nsudo ifconfig eth0 %s \nsudo route add default gw %s eth0 \nexit 0";
+	char format[] = "#!/bin/sh -e  \nsudo ifconfig %s %s \nsudo route add default gw %s %s \nexit 0";
 	char buf[256] = {};
 	
 	fptr = fopen("/etc/rc.local", "w");
@@ -30,7 +31,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 	  exit(1);
 	}
 	
-	sprintf(buf,format,ip,gw);
+	sprintf(buf,format,DEV,ip,gw,DEV);
 
 	fprintf(fptr,"%s",buf);
 	
@@ -41,19 +42,19 @@ void write_auto_run_script(const char *ip, const char *gw){
 
 void change_static_ip(const char *ip){
 	
-	char format[] = "sudo ifconfig eth0 %s";
+	char format[] = "sudo ifconfig %s %s";
 	char cmd[256] = {};
 
-	sprintf(cmd,format,ip);
+	sprintf(cmd,format,DEV,ip);
 	system(cmd);
 }
 
 void change_gw_ip(const char *ip){
 	
-	char format[] = "sudo route add default gw %s eth0";
+	char format[] = "sudo route add default gw %s %s";
 	char cmd[256] = {};
 	
-	sprintf(cmd,format,ip);
+	sprintf(cmd,format,ip,DEV);
 	system(cmd);
 }
 
