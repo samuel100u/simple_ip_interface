@@ -20,7 +20,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 
 	FILE *fptr;
 	
-	char format[] = "#!/bin/sh -e  \nsudo ifconfig %s %s \nsudo route add default gw %s %s \nexit 0";
+	char format[] = "#!/bin/sh -e  \nsleep 10\nsudo ip addr flush dev %s \nsudo ifconfig %s %s \nsudo route add default gw %s %s \nexit 0";
 	char buf[256] = {};
 	
 	fptr = fopen("/etc/rc.local", "w");
@@ -31,7 +31,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 	  exit(1);
 	}
 	
-	sprintf(buf,format,DEV,ip,gw,DEV);
+	sprintf(buf,format,DEV,DEV,ip,gw,DEV);
 
 	fprintf(fptr,"%s",buf);
 	
