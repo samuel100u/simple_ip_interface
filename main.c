@@ -14,34 +14,30 @@ int isValidIpAddress(const char *ipAddress)
     return result != 0;
 }
 
-int change_static_ip(const char *ip){
+void change_static_ip(const char *ip){
 	
 	char format[] = "sudo ifconfig eth0 %s";
 	char cmd[256] = {};
-	
-	if(isValidIpAddress(ip)){
-			
-		sprintf(cmd,format,ip);
-		system(cmd);
-		//system("sudo route add default gw 192.168.1.1 eth0");
 
-	}else{
-		return 0;
-	}
-	
-	return 1;
+	sprintf(cmd,format,ip);
+	system(cmd);
 }
 
-
-int change_gw_ip(const char *ip){
+void change_gw_ip(const char *ip){
 	
 	char format[] = "sudo route add default gw %s eth0";
 	char cmd[256] = {};
 	
-	if(isValidIpAddress(ip)){
+	sprintf(cmd,format,ip);
+	system(cmd);
+}
+
+int change_network_settings(const char *ip, const char *gw){
+
+	if(isValidIpAddress(ip)&& isValidIpAddress(gw)){
 			
-		sprintf(cmd,format,ip);
-		system(cmd);
+		change_static_ip(ip);
+		change_gw_ip(gw);
 		
 	}else{
 		return 0;
@@ -49,15 +45,12 @@ int change_gw_ip(const char *ip){
 	
 	return 1;
 }
-
-
 onion_connection_status process_data(void *_, onion_request *req, onion_response *res){
 	
-	char temp[250] =			"<html>\n"
+	char temp[] =		"<html>\n"
 								"<head>\n"
 									"<title>%s</title>\n"
 								"</head>\n"
-							"\n"
 							"%s\n"
 								"<form>\n"
 									"<input type=\"button\" value=\"Go back!\" onclick=\"history.back()\">\n"
@@ -71,11 +64,11 @@ onion_connection_status process_data(void *_, onion_request *req, onion_response
 	}
 	
 	
-	const char *IP = onion_request_get_post(req,"text");
+	const char *IP = onion_request_get_post(req,"ip");
+	const char *GW = onion_request_get_post(req,"gw");
+		
+	int result = change_network_settings(IP, GW);
 	
-		
-	int result = change_static_ip(IP);
-		
 	if(result){
 		onion_response_printf(res,temp, "successfully", "IP updates successfully.");
 	}else{
@@ -98,9 +91,10 @@ char config_html[] =	"<html>\n"
 							"</head>\n"
 							"\n"
 							"<form method=\"POST\" action=\"process_data\">\n"
-							"IP: "
-								"<input type=\"text\" name=\"text\" required=\"required\">\n"
-								"<input type=\"submit\">\n"
+							"IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+								"<input type=\"text\" name=\"ip\" required=\"required\">\n"
+								"<br><br>Gateway: <input type=\"text\" name=\"gw\" required=\"required\">\n"
+								"<br><br><input type=\"submit\">\n"
 							"</form>\n"
 						"</html>\n";
 
