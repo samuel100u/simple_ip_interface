@@ -1,5 +1,6 @@
 set(ONION_PREFIX onion04)
 
+
 ExternalProject_Add(
   ${ONION_PREFIX}
   GIT_REPOSITORY "https://github.com/davidmoreno/onion.git"
@@ -16,20 +17,6 @@ ExternalProject_Add(
 
 set(ONION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${ONION_PREFIX})
 
-
 include_directories("${ONION_DIR}/include")
 
 link_directories("${ONION_DIR}/lib")
-
-#message("${CMAKE_SHARED_LIBRARY_PREFIX}humblelogging${CMAKE_SHARED_LIBRARY_SUFFIX}")
-
-set(ONION_LIBS "*.a")
-
-
-
-
-message("${CMAKE_SOURCE_DIR}")
-
-message("${PROJECT_SOURCE_DIR}")
-
-message("${CMAKE_CURRENT_BINARY_DIR}")

@@ -11,9 +11,8 @@ include(ExternalProject)
 
 include(${PROJECT_SOURCE_DIR}/thirdparty/onion.cmake)
 
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
 add_executable(main ${PROJECT_SOURCE_DIR}/main.c)
 
 target_link_libraries(main onion)
+
 add_dependencies(main ${ONION_PREFIX})
