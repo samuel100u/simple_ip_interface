@@ -4,9 +4,6 @@ project(web_project)
 message("Building on system: ${CMAKE_SYSTEM} (${CMAKE_SYSTEM_PROCESSOR})")
 message("Using cmake generator: ${CMAKE_GENERATOR}")
 
-include(CheckIncludeFile)
-include(CheckIncludeFileCXX)
-include(CheckIncludeFiles)
 include(ExternalProject)
 
 include(${PROJECT_SOURCE_DIR}/thirdparty/onion.cmake)
