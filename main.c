@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 
-#define DEV "wlan0"
+#define DEV "eth0"
 
 int isValidIpAddress(const char *ipAddress)
 {
