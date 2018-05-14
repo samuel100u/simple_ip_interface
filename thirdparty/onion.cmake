@@ -1,7 +1,7 @@
 set(ONION_PREFIX onion04)
 set(ONION_URL ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/onion-master.zip)
 set(ONION_MD5 79da8c87e2649f3fbe734f369e4f3de1)
-
+set(ONION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${ONION_PREFIX})
 
 ExternalProject_Add(
   ${ONION_PREFIX}
@@ -9,13 +9,10 @@ ExternalProject_Add(
   URL_MD5 ${ONION_MD5}
   BUILD_COMMAND make -j4
   BUILD_IN_SOURCE 0
-  SOURCE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/onion"
+  SOURCE_DIR "${ONION_DIR}/src"
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/${ONION_PREFIX} -DONION_EXAMPLES=false
   TEST_COMMAND ""
 )
-
-
-set(ONION_DIR ${CMAKE_CURRENT_BINARY_DIR}/${ONION_PREFIX})
 
 include_directories("${ONION_DIR}/include")
 
