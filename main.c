@@ -20,7 +20,21 @@ void write_auto_run_script(const char *ip, const char *gw){
 
 	FILE *fptr;
 	
-	char format[] = "#!/bin/sh -e  \nsleep 10\nsudo ip addr flush dev %s \nsudo ifconfig %s %s \nsudo route add default gw %s %s \nexit 0";
+	char format[] = "#!/bin/sh -e \n"
+					"sudo /etc/init.d/rpcbind restart\n"
+					"sudo mount -t nfs %s /var/Maps/db/ &\n"
+					"sudo touch /var/Maps/db/Welcome &\n"
+					"cd .. && cd /var/WF && su pi -c 'sh runmono.sh'\n"
+					"sudo iptables-restore < /etc/network/iptables.eth0_to_wlan0\n"
+					"sleep 10\n"
+					"sudo ip addr flush dev %s \n"
+					"sudo ifconfig %s %s \n"
+					"sudo route add default gw %s %s \n"
+					"exit 0";
+	
+	
+	
+	
 	char buf[256] = {};
 	
 	fptr = fopen("/etc/rc.local", "w");
@@ -31,7 +45,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 	  exit(1);
 	}
 	
-	sprintf(buf,format,DEV,DEV,ip,gw,DEV);
+	sprintf(buf,format,"192.168.0.16:/var/maps",DEV,DEV,ip,gw,DEV);
 
 	fprintf(fptr,"%s",buf);
 	
