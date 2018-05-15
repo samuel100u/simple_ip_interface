@@ -15,7 +15,7 @@ int isValidIpAddress(const char *ipAddress)
     return result != 0;
 }
 
-void write_auto_run_script(const char *ip, const char *gw){
+void write_auto_run_script(const char *ip, const char *gw, const char *d){
 
 
 	FILE *fptr;
@@ -45,7 +45,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 	  exit(1);
 	}
 	
-	sprintf(buf,format,"192.168.0.16:/var/maps",DEV,DEV,ip,gw,DEV);
+	sprintf(buf,format,d,DEV,DEV,ip,gw,DEV);
 
 	fprintf(fptr,"%s",buf);
 	
@@ -72,13 +72,13 @@ void change_gw_ip(const char *ip){
 	system(cmd);
 }
 
-int change_network_settings(const char *ip, const char *gw){
+int change_network_settings(const char *ip, const char *gw, const char *d){
 
 	if(isValidIpAddress(ip)&& isValidIpAddress(gw)){
 			
 		change_static_ip(ip);
 		change_gw_ip(gw);
-		write_auto_run_script(ip,gw);
+		write_auto_run_script(ip,gw,d);
 		
 	}else{
 		return 0;
@@ -107,10 +107,10 @@ onion_connection_status process_data(void *_, onion_request *req, onion_response
 	
 	const char *IP = onion_request_get_post(req,"ip");
 	const char *GW = onion_request_get_post(req,"gw");
-	
+	const char *D = onion_request_get_post(req,"dev");
 	
 		
-	int result = change_network_settings(IP, GW);
+	int result = change_network_settings(IP, GW,D);
 	
 	if(result){
 		onion_response_printf(res,temp, "successfully", "IP updates successfully.");
@@ -133,13 +133,15 @@ char config_html[] =	"<html>\n"
 							"<head>\n"
 								"<title>Config</title>\n"
 							"</head>\n"
-							"\n"
+							"<h2>\n"
 							"<form method=\"POST\" action=\"process_data\">\n"
-							"IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+							"IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 								"<input type=\"text\" name=\"ip\" required=\"required\">\n"
 								"<br><br>Gateway: <input type=\"text\" name=\"gw\" required=\"required\">\n"
+								"<br><br>Dev:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=\"text\" name=\"dev\" required=\"required\">\n"
 								"<br><br><input type=\"submit\">\n"
 							"</form>\n"
+							"</h2>"
 						"</html>\n";
 
 
