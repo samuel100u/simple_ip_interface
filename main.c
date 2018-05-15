@@ -25,7 +25,7 @@ void write_auto_run_script(const char *ip, const char *gw){
 					"sudo mount -t nfs %s /var/Maps/db/ &\n"
 					"sudo touch /var/Maps/db/Welcome &\n"
 					"cd .. && cd /var/WF && su pi -c 'sh runmono.sh'\n"
-					"sudo iptables-restore < /etc/network/iptables.eth0_to_wlan0\n"
+					"sudo iptables-restore < /etc/network/iptables.eth0_to_wlan0 &\n"
 					"sleep 10\n"
 					"sudo ip addr flush dev %s \n"
 					"sudo ifconfig %s %s \n"
